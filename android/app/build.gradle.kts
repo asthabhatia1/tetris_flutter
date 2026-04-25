@@ -10,6 +10,7 @@ plugins {
 /* -------------------- LOAD KEYSTORE -------------------- */
 val keystoreProperties = Properties()
 val keystoreFile = rootProject.file("key.properties")
+
 if (keystoreFile.exists()) {
     keystoreProperties.load(FileInputStream(keystoreFile))
 } else {
@@ -39,47 +40,23 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
-    /* -------------------- SIGNING CONFIG -------------------- */
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as? String ?: ""
-            keyPassword = keystoreProperties["keyPassword"] as? String ?: ""
-            storePassword = keystoreProperties["storePassword"] as? String ?: ""
-            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }?.takeIf { it.exists() }
-
-            if (storeFile == null) {
-                throw GradleException(
-                    "Keystore file not found or path is incorrect: ${keystoreProperties["storeFile"]}\n" +
-                    "Please check your key.properties and ensure the .jks file exists."
-                )
-            }
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
         }
     }
 
-    /* -------------------- BUILD TYPES -------------------- */
-   
     buildTypes {
-    release {
-        signingConfig = signingConfigs.getByName("release")
-        isMinifyEnabled = false
-        isShrinkResources = false
-
-        ndk {
-            debugSymbolLevel = "none"
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
-
-
-    }
-
-    packagingOptions {
-        jniLibs {
-            doNotStrip += setOf("**/*.so")
-        }
-    }
-
-} // <-- This closes android { ... }
 
 /* -------------------- FLUTTER -------------------- */
 flutter {
