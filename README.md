@@ -77,7 +77,7 @@ lib/
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/flutter-tetris.git
+git clone https://github.com/asthabhatia1/flutter-tetris.git
 cd flutter-tetris
 
 # Install dependencies
